@@ -1,0 +1,19 @@
+{
+	"name": "brandonwestcott/li3_varnish",
+	"type": "li3-libraries",
+	"description": "Lithium PHP easy ESI varnish caching",
+	"keywords": ["li3", "varnish", "lithium", "esi"],
+	"homepage": "https://github.com/brandonwestcott/li3_varnish",
+	"license": "GNU General Public License",
+	"authors": [
+		{
+			"name": "Brandon Westcott",
+			"email": "brandonwestcott@gmail.com",
+			"homepage": "https://github.com/brandonwestcott"
+		}
+	],
+	"require": {
+		"php": ">=5.3",
+		"joseym/li3_installer": "master"
+	}
+}

@@ -10,13 +10,15 @@ class Varnish extends \lithium\core\StaticObject {
 	protected static $_config = array();
 
 	protected static $_defaults = array(
+		'esiUrl' => '/esi',
+		'template' => '<esi:include src="{:url}"/><esi:remove>{:content}</esi:remove>',		
 		'defaults' => array(
 			'esi' => false,
 			'expire' => null,
 		)
 	);
 
-	public static function config() {
+	public static function config($name = null) {
 		if(empty(self::$_config)){
 			$config = Libraries::get('li3_varnish');
 
@@ -28,6 +30,14 @@ class Varnish extends \lithium\core\StaticObject {
 			}
 
 			self::$_config = $config + self::$_defaults;
+		}
+
+		if(isset($name)){
+			if(isset(self::$_config[$name])){
+				return self::$_config[$name];
+			} else {
+				return null;
+			}
 		}
 
 		return self::$_config;

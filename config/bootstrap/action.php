@@ -2,7 +2,10 @@
 use lithium\core\Libraries;
 use lithium\action\Dispatcher;
 use li3_varnish\extensions\util\Varnish;
+use lithium\net\http\Media;
+use lithium\net\http\Router;
 
+// filter to set varnish headers
 Dispatcher::applyFilter('_call', function($self, $params, $chain) {
 	$response = $chain->next($self, $params, $chain);
 
@@ -28,3 +31,28 @@ Dispatcher::applyFilter('_call', function($self, $params, $chain) {
 
 	return $response;
 });
+
+// filter to set esi includes around partials
+Media::applyFilter('view', function($self, $params, $chain) {	
+
+	$view = $chain->next($self, $params, $chain);
+
+	$view->applyFilter('_step', function($self, $params, $chain) {	
+
+		$content = $chain->next($self, $params, $chain);
+
+		if(isset($params['options']['esi']) && $params['options']['esi'] == true){
+			if(!empty($content)){
+				$content = \lithium\util\String::insert(Varnish::config('template'), array(
+					'url' => Router::match(array('controller' => 'Esi', 'action' => 'show', 'type' => $params['step']['path'], 'name' => $params['options']['template'])),
+					'content' => $content,
+				));
+			}
+		}
+
+		return $content;
+	});
+
+	return $view;
+});
+

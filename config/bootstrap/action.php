@@ -21,8 +21,11 @@ Dispatcher::applyFilter('_call', function($self, $params, $chain) {
 	}
 
 	if(!empty($cache)){
-		if($cache['esi'] == true){
+		if($cache['esi'] === true){
 			$response->headers('Esi-Enabled', '1');
+		} else if(!empty($cache['esi'])){
+			$esi = array_pad(explode('=', $cache['esi']), 2, 1);
+			$response->headers($esi[0], $esi[1]);
 		}
 		$response->headers('Cache-Control', Varnish::cacheControl($cache['expire']));
 		$response->headers('Pragma', 'public');

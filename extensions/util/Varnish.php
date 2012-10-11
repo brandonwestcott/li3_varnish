@@ -11,10 +11,17 @@ class Varnish extends \lithium\core\StaticObject {
 
 	protected static $_defaults = array(
 		'esiUrl' => '/esi',
-		'template' => '<esi:include src="{:url}"/><esi:remove>{:content}</esi:remove>',		
+		'template' => '<esi:include src="{:url}"/><esi:remove>{:content}</esi:remove>',
+		'headers' => array(
+			'cache' => 'Cache-Control',
+			'expires' => 'Expires',
+			'esi' => 'Esi-Enabled',
+			'passthrough' => 'Passthrough-Cache',
+		),	
 		'defaults' => array(
 			'esi' => false,
 			'expire' => null,
+			'passthrough' => false,	
 		)
 	);
 
@@ -29,6 +36,11 @@ class Varnish extends \lithium\core\StaticObject {
 				unset($config[$env]);
 			}
 
+			foreach($config as $k => $v){
+				if(isset(self::$_defaults[$k]) && is_array(self::$_defaults[$k])){
+					$config[$k] += self::$_defaults[$k];
+				}
+			}
 			self::$_config = $config + self::$_defaults;
 		}
 
@@ -62,6 +74,31 @@ class Varnish extends \lithium\core\StaticObject {
 		}
 
 		return $config['cache'];
+	}
+
+	// get all Varnish headers
+	public static function headers($cache = array()){
+		$headers = array();
+
+		if(!empty($cache)){
+			$headerKeys = array_filter(self::config('headers'));
+
+			if($cache['esi'] == true && isset($headerKeys['esi'])){
+				$headers[$headerKeys['esi']] =  $cache['esi'];
+			}
+			if($cache['passthrough'] == false && isset($headerKeys['passthrough'])){
+				$headers[$headerKeys['passthrough']] = false;
+			}
+			if(isset($headerKeys['cache'])){
+				$headers[$headerKeys['cache']] =  self::cacheControl($cache['expire']);
+			}
+			if(isset($headerKeys['expires'])){
+				$headers[$headerKeys['expires']] =  self::expires($cache['expire']);		
+			}
+		}
+
+		return $headers;
+
 	}
 
 

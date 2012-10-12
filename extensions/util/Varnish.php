@@ -21,7 +21,7 @@ class Varnish extends \lithium\core\StaticObject {
 		'defaults' => array(
 			'esi' => false,
 			'expire' => null,
-			'passthrough' => false,	
+			'passthrough' => false,
 		)
 	);
 
@@ -94,6 +94,9 @@ class Varnish extends \lithium\core\StaticObject {
 			}
 			if(isset($headerKeys['expires'])){
 				$headers[$headerKeys['expires']] =  self::expires($cache['expire']);		
+			}
+			if(isset($cache['headers']) && !empty($cache['headers'])){
+				$headers += (array) $cache['headers'];
 			}
 		}
 

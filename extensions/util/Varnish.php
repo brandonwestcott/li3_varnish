@@ -16,11 +16,13 @@ class Varnish extends \lithium\core\StaticObject {
 			'cache' => 'Cache-Control',
 			'expires' => 'Expires',
 			'esi' => 'Esi-Enabled',
+			'ttl' => 'TTL',
 			'passthrough' => 'Passthrough-Cache',
 		),	
 		'defaults' => array(
 			'esi' => false,
 			'expire' => null,
+			'ttl' => null,
 			'passthrough' => false,
 		)
 	);
@@ -92,6 +94,9 @@ class Varnish extends \lithium\core\StaticObject {
 			}
 			if($cache['passthrough'] == false && isset($headerKeys['passthrough'])){
 				$headers[$headerKeys['passthrough']] = false;
+			}
+			if(isset($cache['ttl']) && isset($headerKeys['ttl'])){
+				$headers[$headerKeys['ttl']] = $cache['ttl'];
 			}
 			if(isset($headerKeys['cache'])){
 				$headers[$headerKeys['cache']] =  self::cacheControl($cache['expire']);

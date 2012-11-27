@@ -62,8 +62,8 @@ class Varnish extends \lithium\core\StaticObject {
 		$config = self::config();
 
 		if(isset($name)){
-			$controllerName = array_shift(explode('::', $name));
-			foreach(array($name, $controllerName) as $key){
+			$controllerName = array_slice(explode('::', $name), -1, 1);
+			foreach(array($name, $controllerName[0]) as $key){
 				if($config['cache'] === true || in_array($key, $config['cache']) || $unique = isset($config['cache'][$key])){
 					if(isset($unique) && $unique == true){
 						return $config['cache'][$key] + $config['defaults'];
